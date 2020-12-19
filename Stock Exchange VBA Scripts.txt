@@ -1,0 +1,118 @@
+Sub Stonks():
+    Dim Total_Stock_Volume As Double
+    Dim Summary_Table_Row As Integer
+    Dim lastRow As Long
+    Dim ws As Worksheet
+    Dim i As Long
+    Dim Ticker As String
+    Dim Start As Long
+    Dim Percentage_Change As Double
+    Dim Yearly_Change As Double
+    Dim Max_Volume As Double
+    Dim Max_Yearly_Increase As Double
+    Dim Max_Yearly_Decrease As Double
+    Dim Max_Stock_Name As String
+    Dim Ticker_Name As String
+    
+    
+    
+    
+
+    For Each ws In Worksheets
+    
+    Summary_Table_Row = 2
+    Total_Stock_Volume = 0
+    Start = 2
+    lastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    
+        For i = 2 To lastRow
+           
+            ' Total_Stock_Volume = Total_Stock_Volume + CDbl(ws.Cells(i, 7).Value)
+            Total_Stock_Volume = Total_Stock_Volume + ws.Cells(i, 7).Value
+
+            If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+            
+                Ticker = ws.Cells(i, 1).Value
+                Total_Stock_Volume = Total_Stock_Volume + ws.Cells(i, 7).Value
+             ' Yearly change is good to go!
+                Yearly_Change = (ws.Cells(i, 6).Value) - (ws.Cells(Start, 3).Value)
+                open_price = ws.Cells(Start, 3).Value
+                If open_price = 0 Then
+                Percentage_Change = 0
+                Else
+                Percentage_Change = (Yearly_Change / ws.Cells(Start, 3).Value)
+                End If
+                
+                
+                'With ws.Range("L" & Summary_Table_Row).Value = Total_Stock_Volume
+                ws.Range("L" & Summary_Table_Row).Value = Total_Stock_Volume
+                ws.Range("J" & Summary_Table_Row).Value = Yearly_Change
+                ws.Range("I" & Summary_Table_Row).Value = Ticker
+                ws.Range("K" & Summary_Table_Row).Value = Percentage_Change
+                
+                If Yearly_Change >= 0 Then
+               ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 4
+               Else
+               ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
+               End If
+                
+                Summary_Table_Row = Summary_Table_Row + 1
+                Total_Stock_Volume = 0
+                Start = (i + 1)
+                    
+                    ' Yearly_Change = (ws.Cells(i, 6).Value) - (ws.Cells(Start, 3).Value)
+                ' End With
+               
+            End If
+            
+        Next i
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+        ' greatest total volume
+        Max_Volume = 0
+        For j = 2 To lastRow
+            If Cells(j, 12).Value > Max_Volume Then
+            Max_Volume = Cells(j, 12).Value
+            Ticker_Name = Cells(j, 9).Value
+            ws.Range("Q" & 4).Value = Max_Volume
+            ws.Range("P" & 4).Value = Ticker_Name
+           End If
+        Next j
+        
+        ' greatest % increase
+        Max_Yearly_Increase = 0
+        For k = 2 To lastRow
+            If Cells(k, 11).Value > Max_Yearly_Increase Then
+            Max_Yearly_Increase = Cells(k, 11).Value
+            ' should this "Ticker_Name" be different from the above "Ticker_Name"s???
+            Ticker_Name = Cells(k, 9).Value
+            ws.Range("Q" & 3).Value = Max_Yearly_Increase
+            ws.Range("P" & 3).Value = Ticker_Name
+           End If
+        Next k
+        
+         ' greatest % decrease
+        Max_Yearly_Decrease = 0
+        For l = 2 To lastRow
+            If Cells(l, 11).Value < Max_Yearly_Decrease Then
+            Max_Yearly_Decrease = Cells(l, 11).Value
+            ' should this "Ticker_Name" be different from the above "Ticker_Name"s???
+            Ticker_Name = Cells(l, 9).Value
+            ws.Range("Q" & 2).Value = Max_Yearly_Decrease
+            ws.Range("P" & 2).Value = Ticker_Name
+           End If
+        Next l
+            
+            
+
+    Next ws
+End Sub
+               
+            
+            
+            
+
+
